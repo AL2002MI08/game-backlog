@@ -5,9 +5,9 @@ import { useGameFilters } from "@/hooks/useGameFilters";
 import LibraryFilters from "@/components/game-list/Filters";
 import Card from "@/components/game/Card";
 import EmptyState from "@/components/game-list/EmptyState";
-import LibrarySkeleton from "@/components/game-list/Skeleton";
 import { RootLayoutContext } from "@/layouts/RootLayout";
 import { RouteLinks } from "@/constants/routes";
+import Spinner from "@/components/ui/Spinner";
 
 export default function Games() {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export default function Games() {
         hasActiveFilters={filter.hasActiveFilters}
       />
 
-      {isLoading && <LibrarySkeleton />}
+      {isLoading && <Spinner />}
 
       {isError && !isLoading && (
         <div className="bg-white dark:bg-[#090e1c] border border-rose-500/30 rounded-2xl p-8 text-center space-y-4 max-w-lg mx-auto shadow-lg">

@@ -1,43 +1,44 @@
-import { useRef, useState } from 'react';
-import { Autocomplete, Loader } from '@mantine/core';
+import { forwardRef } from 'react';
+import { TextInput, MantineSize } from '@mantine/core';
 
-export function Input() {
-  const timeoutRef = useRef<number>(-1);
-  const [value, setValue] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<string[]>([]);
-
-  const handleChange = (val: string) => {
-    window.clearTimeout(timeoutRef.current);
-    setValue(val);
-    setData([]);
-
-    if (val.trim().length === 0 || val.includes('@')) {
-      setLoading(false);
-    } else {
-      setLoading(true);
-      timeoutRef.current = window.setTimeout(() => {
-        setLoading(false);
-        setData(['gmail.com', 'outlook.com', 'yahoo.com'].map((provider) => `${val}@${provider}`));
-      }, 1000);
-    }
-  };
-  return (
-    <Autocomplete
-      value={value}
-      data={data}
-      onChange={handleChange}
-      rightSection={loading ? <Loader size={18} /> : null}
-      label="Email address"
-      placeholder="Your email"
-      size="lg"
-      radius="md"
-      styles={{
-        input: {
-          paddingInlineStart: '18px',
-          paddingInlineEnd: '20px',
-        },
-      }}
-    />
-  );
+export interface InputProps {
+  value?: string;
+  onChange?: (value: string) => void;
+  onBlur?: () => void;
+  error?: string;
+  disabled?: boolean;
+  name?: string;
+  label?: string;
+  placeholder?: string;
+  size?: MantineSize;
 }
+
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ value = '', onChange, onBlur, error, disabled, name, label = 'Email address', placeholder = 'Your email', size = 'md' }, ref) => {
+    return (
+      <TextInput
+        ref={ref}
+        name={name}
+        value={value}
+        onChange={(e) => onChange?.(e.currentTarget.value)}
+        onBlur={onBlur}
+        error={error}
+        disabled={disabled}
+        label={label}
+        placeholder={placeholder}
+        size={size}
+        radius="md"
+        type="email"
+        autoComplete="email"
+        styles={{
+          input: {
+            paddingInlineStart: '18px',
+            paddingInlineEnd: '20px',
+          },
+        }}
+      />
+    );
+  }
+);
+
+Input.displayName = 'Input';

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate, useOutletContext, Link } from "react-router-dom";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { useGameDetailQuery, useUpdateGameMutation, useDeleteGameMutation } from "@/hooks/useGames";
 import { GameStatus } from "@/constants/game";
 import { createObjective } from "@/utils/game";
@@ -12,6 +12,7 @@ import ConfirmModal from "@/components/ConfirmModal";
 import Button from "@/components/ui/Button";
 import { RootLayoutContext } from "@/layouts/RootLayout";
 import { RouteLinks } from "@/constants/routes";
+import Spinner from "@/components/ui/Spinner";
 
 function getErrorMessage(e: unknown): string {
   return e instanceof Error ? e.message : "Something went wrong. Please try again.";
@@ -29,12 +30,7 @@ export default function GameDetail() {
   const deleteMutation = useDeleteGameMutation();
 
   if (isLoading) {
-    return (
-      <div className="py-24 flex flex-col items-center justify-center gap-3 text-center">
-        <Loader2 className="w-10 h-10 text-teal-600 dark:text-teal-400 animate-spin" />
-        <p className="text-slate-500 dark:text-slate-400 text-sm">Fetching game details...</p>
-      </div>
-    );
+    return <Spinner />;
   }
 
   if (isError || !game) {

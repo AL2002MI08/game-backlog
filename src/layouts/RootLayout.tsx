@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/Sidebar";
 import { Outlet } from "react-router-dom";
 import FormModal from "@/components/FormModal";
 import Form from "@/components/game-detail/Form";
@@ -28,7 +29,8 @@ export default function RootLayout() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-slate-100 flex flex-col md:pl-16 sm:md:pl-20 transition-colors duration-200">
+      <Sidebar />
       <Navbar onAddGame={outletContext.openAddGame} />
       <FormModal opened={showAdd} onClose={() => setShowAdd(false)} title="Add Game">
         <Form

@@ -3,6 +3,7 @@ import { MantineProvider } from "@mantine/core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { theme } from "@/theme";
 import { router } from "@/route";
+import { AuthProvider } from "@/context/AuthContext";
 import "@mantine/core/styles.css";
 import "./App.css";
 
@@ -20,7 +21,9 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme} defaultColorScheme="dark">
-        <RouterProvider router={router} />
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
       </MantineProvider>
     </QueryClientProvider>
   );
