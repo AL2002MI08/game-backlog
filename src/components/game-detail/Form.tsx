@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertTriangle, Trash2, Plus } from 'lucide-react';
 import { useCreateGameMutation, useUpdateGameMutation } from '@/hooks/useGames';
 import { STATUS_FORM_OPTIONS, PLATFORM_FORM_OPTIONS, Platform, GameStatus } from '@/constants/game';
 import { createObjective } from '@/utils/game';
+import { gameSchema, GameFormValues } from '@/schemas/game';
 import Select from '@/components/ui/Select';
 import Button from '@/components/ui/Button';
 import { Game, GameObjective } from '@/types/game';
@@ -14,15 +16,6 @@ interface FormProps {
   onSuccess: () => void;
   onError?: (message: string) => void;
   loading?: boolean;
-}
-
-interface FormValues {
-  title: string;
-  platform: Platform;
-  status: GameStatus;
-  rating?: number;
-  coverImage?: string;
-  notes?: string;
 }
 
 export default function Form({ mode, initialData, onSuccess, onError, loading = false }: FormProps) {
@@ -37,7 +30,8 @@ export default function Form({ mode, initialData, onSuccess, onError, loading = 
     watch,
     control,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<GameFormValues>({
+    resolver: zodResolver(gameSchema),
     defaultValues: {
       title: initialData?.title ?? '',
       platform: initialData?.platform ?? Platform.OTHER,
@@ -64,7 +58,7 @@ export default function Form({ mode, initialData, onSuccess, onError, loading = 
     setNewObjectiveTitle('');
   };
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+  const onSubmit: SubmitHandler<GameFormValues> = async (data) => {
     try {
       if (mode === 'add') {
         await createMutation.mutateAsync({ ...data, objectives });
@@ -83,10 +77,10 @@ export default function Form({ mode, initialData, onSuccess, onError, loading = 
         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Title</label>
         <input
           type="text"
-          {...register('title', { required: true })}
+          {...register('title')}
           className="w-full rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-2"
         />
-        {errors.title && <span className="text-xs text-rose-600">Title is required</span>}
+        {errors.title && <span className="text-xs text-rose-600">{errors.title.message}</span>}
       </div>
 
       <div>
@@ -104,7 +98,6 @@ export default function Form({ mode, initialData, onSuccess, onError, loading = 
         <Controller
           name="platform"
           control={control}
-          rules={{ required: true }}
           render={({ field }) => (
             <Select
               data={PLATFORM_FORM_OPTIONS}
@@ -116,7 +109,7 @@ export default function Form({ mode, initialData, onSuccess, onError, loading = 
             />
           )}
         />
-        {errors.platform && <span className="text-xs text-rose-600">Platform is required</span>}
+        {errors.platform && <span className="text-xs text-rose-600">{errors.platform.message}</span>}
       </div>
 
       <div>
@@ -124,7 +117,6 @@ export default function Form({ mode, initialData, onSuccess, onError, loading = 
         <Controller
           name="status"
           control={control}
-          rules={{ required: true }}
           render={({ field }) => (
             <Select
               data={STATUS_FORM_OPTIONS}
@@ -136,7 +128,7 @@ export default function Form({ mode, initialData, onSuccess, onError, loading = 
             />
           )}
         />
-        {errors.status && <span className="text-xs text-rose-600">Status is required</span>}
+        {errors.status && <span className="text-xs text-rose-600">{errors.status.message}</span>}
         {showFinishedWarning && (
           <div className="mt-2 flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
             <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
@@ -157,7 +149,7 @@ export default function Form({ mode, initialData, onSuccess, onError, loading = 
             min={0}
             max={10}
             step={0.1}
-            {...register('rating', { min: 0, max: 10 })}
+            {...register('rating', { valueAsNumber: true })}
             className="w-full rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-2"
           />
         </div>
