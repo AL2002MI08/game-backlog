@@ -11,6 +11,7 @@ import Form from "@/components/game-detail/Form";
 import ConfirmModal from "@/components/ConfirmModal";
 import Button from "@/components/ui/Button";
 import { RootLayoutContext } from "@/layouts/RootLayout";
+import { RouteLinks } from "@/constants/routes";
 
 function getErrorMessage(e: unknown): string {
   return e instanceof Error ? e.message : "Something went wrong. Please try again.";
@@ -44,7 +45,7 @@ export default function GameDetail() {
         <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">{error?.message || `No game found with ID #${id}.`}</p>
         <div className="flex justify-center gap-3 pt-2">
           <button onClick={() => refetch()} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold">Retry</button>
-          <Link to="/games" className="px-4 py-2 bg-teal-500 text-slate-950 rounded-xl text-xs font-bold">Back to Library</Link>
+          <Link to={RouteLinks.GameOverview} className="px-4 py-2 bg-teal-500 text-slate-950 rounded-xl text-xs font-bold">Back to Library</Link>
         </div>
       </div>
     );
@@ -84,7 +85,7 @@ export default function GameDetail() {
   const handleDelete = async () => {
     try {
       await deleteMutation.mutateAsync(game.id);
-      navigate("/games");
+      navigate(RouteLinks.GameOverview);
       showToast("Game deleted successfully");
     } catch (e) {
       showToast(getErrorMessage(e), "error");

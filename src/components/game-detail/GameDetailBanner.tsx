@@ -6,6 +6,7 @@ import { getActivePlatform } from "@/utils/game";
 import { GameStatus } from "@/constants/game";
 import { PlatformBadge, StatusBadge } from "@/components/game/StatusBadge";
 import Button from "@/components/ui/Button";
+import { RouteLinks } from "@/constants/routes";
 
 interface GameDetailBannerProps {
   game: Game;
@@ -21,7 +22,7 @@ export default function GameDetailBanner({ game, onOpenDelete, onOpenEdit }: Gam
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
-        <Link to="/games" className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-500 hover:text-teal-600 dark:text-slate-400 dark:hover:text-teal-400 transition-colors">
+        <Link to={RouteLinks.GameOverview} className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-500 hover:text-teal-600 dark:text-slate-400 dark:hover:text-teal-400 transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Library
         </Link>
         <div className="flex items-center gap-2">

@@ -7,6 +7,7 @@ import Card from "@/components/game/Card";
 import EmptyState from "@/components/game-list/EmptyState";
 import LibrarySkeleton from "@/components/game-list/Skeleton";
 import { RootLayoutContext } from "@/layouts/RootLayout";
+import { RouteLinks } from "@/constants/routes";
 
 export default function Games() {
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ export default function Games() {
           {filter.filteredGames.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {filter.filteredGames.map((game) => (
-                <Card key={game.id} game={game} onClick={() => navigate(`/games/${game.id}`)} />
+                <Card key={game.id} game={game} onClick={() => navigate(`${RouteLinks.GameOverview}/${game.id}`)} />
               ))}
             </div>
           ) : (

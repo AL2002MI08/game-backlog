@@ -1,3 +1,4 @@
+import { RouteLinks } from "@/constants/routes";
 import {Link} from "react-router-dom";
 
 export default function NotFound(){
@@ -6,7 +7,7 @@ export default function NotFound(){
             <p className="text-white">
             Page not found
             </p>
-            <Link to="/games">Go back</Link>
+            <Link to={RouteLinks.GameOverview}>Go back</Link>
         </div>
     )
 }
