@@ -12,6 +12,7 @@ interface FormProps {
   mode: 'add' | 'edit';
   initialData?: Game;
   onSuccess: () => void;
+  onError?: (message: string) => void;
   loading?: boolean;
 }
 
@@ -24,7 +25,7 @@ interface FormValues {
   notes?: string;
 }
 
-export default function Form({ mode, initialData, onSuccess, loading = false }: FormProps) {
+export default function Form({ mode, initialData, onSuccess, onError, loading = false }: FormProps) {
   const createMutation = useCreateGameMutation();
   const updateMutation = useUpdateGameMutation();
   const [objectives, setObjectives] = useState<GameObjective[]>(initialData?.objectives ?? []);
@@ -72,7 +73,7 @@ export default function Form({ mode, initialData, onSuccess, loading = false }: 
       }
       onSuccess();
     } catch (e) {
-      console.error(e);
+      onError?.(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
     }
   };
 

@@ -3,23 +3,23 @@ import Navbar from "@/components/Navbar";
 import { Outlet } from "react-router-dom";
 import FormModal from "@/components/FormModal";
 import Form from "@/components/game-detail/Form";
-import Toast from "@/components/ui/Toast";
+import Toast, { ToastVariant } from "@/components/ui/Toast";
 
 export interface RootLayoutContext {
   openAddGame: () => void;
-  showToast: (message: string) => void;
+  showToast: (message: string, variant?: ToastVariant) => void;
 }
 
 const TOAST_DURATION_MS = 3000;
 
 export default function RootLayout() {
   const [showAdd, setShowAdd] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; variant: ToastVariant } | null>(null);
   const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const showToast = useCallback((message: string) => {
+  const showToast = useCallback((message: string, variant: ToastVariant = "success") => {
     clearTimeout(toastTimeoutRef.current);
-    setToastMessage(message);
-    toastTimeoutRef.current = setTimeout(() => setToastMessage(null), TOAST_DURATION_MS);
+    setToast({ message, variant });
+    toastTimeoutRef.current = setTimeout(() => setToast(null), TOAST_DURATION_MS);
   }, []);
 
   const outletContext = useMemo<RootLayoutContext>(
@@ -37,14 +37,16 @@ export default function RootLayout() {
             setShowAdd(false);
             showToast("Game added successfully");
           }}
+          onError={(message) => showToast(message, "error")}
         />
       </FormModal>
-      {toastMessage && (
+      {toast && (
         <Toast
-          message={toastMessage}
+          message={toast.message}
+          variant={toast.variant}
           onClose={() => {
             clearTimeout(toastTimeoutRef.current);
-            setToastMessage(null);
+            setToast(null);
           }}
         />
       )}

@@ -1,18 +1,25 @@
 import { useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, useOutletContext, Link } from "react-router-dom";
 import { AlertTriangle, Loader2 } from "lucide-react";
-import { useGameDetailQuery, useUpdateGameMutation, useDeleteGameMutation } from "../hooks/useGames";
-import { GameStatus } from "../constants/game";
-import GameDetailBanner from "../components/game-detail/GameDetailBanner";
-import GameDetailObjectives from "../components/game-detail/GameDetailObjectives";
+import { useGameDetailQuery, useUpdateGameMutation, useDeleteGameMutation } from "@/hooks/useGames";
+import { GameStatus } from "@/constants/game";
+import { createObjective } from "@/utils/game";
+import GameDetailBanner from "@/components/game-detail/GameDetailBanner";
+import GameDetailObjectives from "@/components/game-detail/GameDetailObjectives";
 import FormModal from "@/components/FormModal";
 import Form from "@/components/game-detail/Form";
 import ConfirmModal from "@/components/ConfirmModal";
 import Button from "@/components/ui/Button";
+import { RootLayoutContext } from "@/layouts/RootLayout";
+
+function getErrorMessage(e: unknown): string {
+  return e instanceof Error ? e.message : "Something went wrong. Please try again.";
+}
 
 export default function GameDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { showToast } = useOutletContext<RootLayoutContext>();
   const gameId = id;
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -48,25 +55,61 @@ export default function GameDetail() {
     const updated = game.objectives.map((objective) => (objective.id === objId ? { ...objective, completed: !objective.completed } : objective));
     const allDone = updated.every((objective) => objective.completed);
     const status = allDone && game.status === GameStatus.PLAYING ? GameStatus.FINISHED : game.status;
-    await updateMutation.mutateAsync({ id: game.id, data: { objectives: updated, status } });
+    try {
+      await updateMutation.mutateAsync({ id: game.id, data: { objectives: updated, status } });
+    } catch (e) {
+      showToast(getErrorMessage(e), "error");
+    }
   };
 
+  const handleRemoveObjective = async (objId: string) => {
+    if (!game.objectives) return;
+    const updated = game.objectives.filter((objective) => objective.id !== objId);
+    try {
+      await updateMutation.mutateAsync({ id: game.id, data: { objectives: updated } });
+    } catch (e) {
+      showToast(getErrorMessage(e), "error");
+    }
+  };
+
+  const handleAddObjective = async (title: string) => {
+    const updated = [...(game.objectives ?? []), createObjective(title)];
+    try {
+      await updateMutation.mutateAsync({ id: game.id, data: { objectives: updated } });
+    } catch (e) {
+      showToast(getErrorMessage(e), "error");
+    }
+  };
 
   const handleDelete = async () => {
-    await deleteMutation.mutateAsync(game.id);
-    navigate("/games");
+    try {
+      await deleteMutation.mutateAsync(game.id);
+      navigate("/games");
+      showToast("Game deleted successfully");
+    } catch (e) {
+      showToast(getErrorMessage(e), "error");
+    }
   };
 
   return (
     <div className="w-full space-y-6 pb-16 px-2">
       <FormModal opened={showEdit} onClose={() => setShowEdit(false)} title="Edit Game">
-        <Form mode="edit" initialData={game} onSuccess={() => { setShowEdit(false); refetch(); }} loading={updateMutation.isPending} />
+        <Form
+          mode="edit"
+          initialData={game}
+          onSuccess={() => { setShowEdit(false); refetch(); }}
+          onError={(message) => showToast(message, "error")}
+          loading={updateMutation.isPending}
+        />
       </FormModal>
       <ConfirmModal opened={showDelete} onClose={() => setShowDelete(false)} title="Delete Game">
-        <p>Are you sure you want to delete game?</p>
-        <div className="flex gap-5 items-center justify-center">
-          <Button>Cancel</Button>
-          <Button>Delete</Button>
+        <p>
+          Are you sure you want to delete this game? It's objective checklist will be permanently
+          cleared as well.
+        </p>
+        <div className="flex gap-3 items-center justify-center pt-4">
+          <Button variant="outline" onClick={() => setShowDelete(false)}>Cancel</Button>
+          <Button variant="danger-solid" onClick={handleDelete} loading={deleteMutation.isPending}>Delete</Button>
         </div>
       </ConfirmModal>
       <GameDetailBanner
@@ -75,7 +118,12 @@ export default function GameDetail() {
         onOpenEdit={() => setShowEdit(true)}
 
       />
-      <GameDetailObjectives game={game} onToggle={handleToggle} />
+      <GameDetailObjectives
+        game={game}
+        onToggle={handleToggle}
+        onRemove={handleRemoveObjective}
+        onAdd={handleAddObjective}
+      />
     </div>
   );
 }
