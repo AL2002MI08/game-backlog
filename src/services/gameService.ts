@@ -1,16 +1,8 @@
-import { apiClient } from "@/services/apiClient";
-import { GameStatus } from "@/constants/game";
+import { apiClient } from "@/services/apiClient"
 import { FilterParams, Game } from "@/types/game";
+import { stripRatingIfUnplayed } from "@/utils/game";
 import { isValidId, validateGamePayload } from "@/utils/validation";
 
-
-function stripRatingIfUnplayed<T extends Partial<Game>>(gameData: T): T {
-  if (gameData.status === GameStatus.UNPLAYED && gameData.rating !== undefined) {
-    const { rating, ...rest } = gameData;
-    return rest as T;
-  }
-  return gameData;
-}
 
 export async function getGames(params?: FilterParams): Promise<Game[]> {
   const queryParams = new URLSearchParams();

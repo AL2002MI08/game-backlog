@@ -31,6 +31,14 @@ export function getGameProgress(game: Game) {
   return { total, completed, percent, category };
 }
 
+export function stripRatingIfUnplayed<T extends Partial<Game>>(gameData: T): T {
+  if (gameData.status === GameStatus.UNPLAYED && gameData.rating !== undefined) {
+    const { rating, ...rest } = gameData;
+    return rest as T;
+  }
+  return gameData;
+}
+
 
 export function getActivePlatform(game: Game): Platform {
   return game.platform || (game.platforms && game.platforms[0]) || Platform.OTHER;
