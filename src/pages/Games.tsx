@@ -2,10 +2,10 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import { AlertTriangle } from "lucide-react";
 import { useGamesQuery } from "@/hooks/useGames";
 import { useGameFilters } from "@/hooks/useGameFilters";
-import LibraryFilters from "@/components/library/Filters";
-import Card from "@/components/games/Card";
-import EmptyState from "@/components/library/EmptyState";
-import LibrarySkeleton from "@/components/library/Skeleton";
+import LibraryFilters from "@/components/game-list/Filters";
+import Card from "@/components/game/Card";
+import EmptyState from "@/components/game-list/EmptyState";
+import LibrarySkeleton from "@/components/game-list/Skeleton";
 import { RootLayoutContext } from "@/layouts/RootLayout";
 
 export default function Games() {
