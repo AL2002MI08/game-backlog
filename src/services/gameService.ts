@@ -1,7 +1,16 @@
 import { apiClient } from "@/services/apiClient";
-import { FilterParams, Game } from "@/types/Game";
-import { validateGamePayload } from "@/utils/helper";
-import { isValidId } from "@/utils/validation";
+import { GameStatus } from "@/constants/game";
+import { FilterParams, Game } from "@/types/game";
+import { isValidId, validateGamePayload } from "@/utils/validation";
+
+
+function stripRatingIfUnplayed<T extends Partial<Game>>(gameData: T): T {
+  if (gameData.status === GameStatus.UNPLAYED && gameData.rating !== undefined) {
+    const { rating, ...rest } = gameData;
+    return rest as T;
+  }
+  return gameData;
+}
 
 export async function getGames(params?: FilterParams): Promise<Game[]> {
   const queryParams = new URLSearchParams();
@@ -17,7 +26,7 @@ export async function getGames(params?: FilterParams): Promise<Game[]> {
   return response.data;
 }
 
-export async function getGameById(id: string): Promise<Game | null> {
+export async function getGameById(id: string | number): Promise<Game | null> {
   if (!isValidId(id)) return null;
 
   const response = await apiClient.get<Game>(`/games/${id}`);
@@ -25,23 +34,25 @@ export async function getGameById(id: string): Promise<Game | null> {
 }
 
 export async function createGame(gameData: Partial<Game>): Promise<Game> {
-  validateGamePayload(gameData);
+  const payload = stripRatingIfUnplayed(gameData);
+  validateGamePayload(payload);
 
-  const response = await apiClient.post<Game>("/games", gameData);
+  const response = await apiClient.post<Game>("/games", payload);
   return response.data;
 }
 
-export async function updateGame(id: string, gameData: Partial<Game>): Promise<Game> {
+export async function updateGame(id: string | number, gameData: Partial<Game>): Promise<Game> {
   if (!isValidId(id)) {
     throw new Error("A valid game id is required");
   }
-  validateGamePayload(gameData);
+  const payload = stripRatingIfUnplayed(gameData);
+  validateGamePayload(payload);
 
-  const response = await apiClient.put<Game>(`/games/${id}`, gameData);
+  const response = await apiClient.put<Game>(`/games/${id}`, payload);
   return response.data;
 }
 
-export async function deleteGame(id: string): Promise<{ success: boolean; id: string }> {
+export async function deleteGame(id: string | number): Promise<{ success: boolean; id: string }> {
   if (!isValidId(id)) {
     throw new Error("A valid game id is required");
   }
