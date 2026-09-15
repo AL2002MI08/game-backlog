@@ -1,4 +1,4 @@
-import { Anchor, Button, Checkbox, Paper, PasswordInput, Text, Title } from '@mantine/core';
+import { Button, Checkbox, Paper, PasswordInput,Title } from '@mantine/core';
 import { AlertCircle } from 'lucide-react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
