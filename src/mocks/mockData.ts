@@ -1,7 +1,27 @@
 import { GameStatus, Platform } from "@/constants/game";
 import { Game } from "@/types/game";
+import { UserProfile } from "@/services/authService";
 
-export const mockGames: Game[] = [
+export interface MockUser extends UserProfile {
+  password: string;
+}
+
+export const MOCK_USERS: MockUser[] = [
+  {
+    id: "1-2",
+    email: "gamer1@gmail.com",
+    name: "Noob",
+    password: "Password123",
+  },
+  {
+    id: "1-3",
+    email: "gamer2@yahoo.com",
+    name: "Fisher",
+    password: "Password456",
+  },
+];
+
+export const MOCK_GAMES: Game[] = [
   {
     id: "1",
     title: "FIFA 13",
