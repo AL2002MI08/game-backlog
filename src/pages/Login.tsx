@@ -1,10 +1,11 @@
-import { Button, Checkbox, Paper, PasswordInput,Title } from '@mantine/core';
+import { Checkbox, Paper, PasswordInput, Title } from '@mantine/core';
 import { AlertCircle } from 'lucide-react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import bgSvg from '@/assets/images/bg-image.svg';
 import { Input } from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
 import Spinner from '@/components/ui/Spinner';
 import { RouteLinks } from '@/constants/routes';
 import { loginSchema, LoginFormValues } from '@/schemas/auth';
@@ -105,15 +106,7 @@ export default function Login() {
               )}
             />
 
-            <Button
-              type="submit"
-              fullWidth
-              size="md"
-              radius="md"
-              loading={isSubmitting}
-              disabled={isSubmitting}
-              className="mt-2 text-teal-600 font-semibold"
-            >
+            <Button type="submit" variant="primary" size="md" loading={isSubmitting} className="w-full mt-2">
               Login
             </Button>
           </form>
