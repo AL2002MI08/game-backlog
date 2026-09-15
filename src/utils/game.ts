@@ -3,11 +3,7 @@ import { Game, GameObjective } from "@/types/game";
 
 export type ProgressCategory = "ALL" | "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
 
-/**
- * Builds a new, unticked objective from a title. Shared by the Add/Edit form
- * and the Game Detail checklist so both "add objective" entry points produce
- * identically-shaped objectives.
- */
+
 export function createObjective(title: string): GameObjective {
   return {
     id: `obj-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
@@ -16,9 +12,6 @@ export function createObjective(title: string): GameObjective {
   };
 }
 
-/**
- * Calculates objective completion stats and overall progress percentage.
- */
 export function getGameProgress(game: Game) {
   const total = game.objectives?.length || 0;
   const completed = game.objectives?.filter((objective) => objective.completed).length || 0;
@@ -38,16 +31,11 @@ export function getGameProgress(game: Game) {
   return { total, completed, percent, category };
 }
 
-/**
- * Returns the primary platform for display.
- */
+
 export function getActivePlatform(game: Game): Platform {
   return game.platform || (game.platforms && game.platforms[0]) || Platform.OTHER;
 }
 
-/**
- * Returns Tailwind badge classes for GameStatus supporting both Light & Dark modes.
- */
 export function getStatusBadgeStyle(status: GameStatus): string {
   switch (status) {
     case GameStatus.FINISHED:
@@ -63,9 +51,6 @@ export function getStatusBadgeStyle(status: GameStatus): string {
   }
 }
 
-/**
- * Returns Tailwind badge classes for Platform supporting both Light & Dark modes.
- */
 export function getPlatformBadgeStyle(platform?: Platform): string {
   switch (platform) {
     case Platform.PLAYSTATION:
