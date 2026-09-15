@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { filterGames, filterOptions } from "@/utils/filter";
+import { filterGames } from "@/utils/filter";
 import { Game } from "@/types/game";
 import { ProgressCategory } from "@/utils/game";
 
@@ -35,8 +35,10 @@ export function useGameFilters(games: Game[] = []) {
     setProgress("ALL");
   };
 
-  const criteria: filterOptions = { search, platform, status, progress };
-  const filteredGames = useMemo(() => filterGames(games, criteria), [games, criteria]);
+  const filteredGames = useMemo(
+    () => filterGames(games, { search, platform, status, progress }),
+    [games, search, platform, status, progress]
+  );
 
   const hasActiveFilters = search.trim() !== "" || platform !== "ALL" || status !== "ALL" || progress !== "ALL";
 

@@ -26,8 +26,6 @@ export default function Games() {
         setStatus={filter.setStatus}
         progress={filter.progress}
         setProgress={filter.setProgress}
-        resetFilters={filter.resetFilters}
-        hasActiveFilters={filter.hasActiveFilters}
       />
 
       {isLoading && <Spinner />}
