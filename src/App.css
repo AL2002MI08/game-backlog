@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import "tailwindcss";
+@variant dark (&:is([data-mantine-color-scheme="dark"], [data-mantine-color-scheme="dark"] *));
+
+@theme {
+  --font-inter: "Inter", sans-serif;
+  --font-sans: "Inter", sans-serif;
+  --default-font-family: var(--font-sans);
+}
+
+@layer base {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    width: 100%;
+    font-family: "Inter", sans-serif;
+  }
+
+  html[data-mantine-color-scheme="dark"] body {
+    background-color: #070b14;
+    color: #f8fafc;
+  }
+
+  html:not([data-mantine-color-scheme="dark"]) body {
+    background-color: #f8fafc;
+    color: #0f172a;
+  }
+
+  #root {
+    min-height: 100%;
+    width: 100%;
+  }
+}
