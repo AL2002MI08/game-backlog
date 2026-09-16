@@ -3,11 +3,12 @@ import { Gamepad2, Sun, Moon, Menu, X } from "lucide-react";
 import { RouteLinks } from "@/constants/routes";
 import { Link, NavLink } from "react-router-dom";
 import { useColorMode } from "@/components/ui/ColorMode";
-import Button, { buttonClassName } from "@/components/ui/Button";
+import Button from "@/components/ui/Button";
 
 interface NavbarProps {
   onAddGame?: () => void;
 }
+
 
 export default function Navbar({ onAddGame }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -28,9 +29,7 @@ export default function Navbar({ onAddGame }: NavbarProps) {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
-            <NavLink
-              to={RouteLinks.GameOverview}
-            >
+            <NavLink to={RouteLinks.GameOverview} className="hover:text-teal-300">
               Games
             </NavLink>
             <Button variant="secondary" size="sm" onClick={onAddGame}>
@@ -56,7 +55,7 @@ export default function Navbar({ onAddGame }: NavbarProps) {
             <NavLink
               to={RouteLinks.GameOverview}
               onClick={() => setIsMobileMenuOpen(false)}
-              className={({ isActive }) => `${buttonClassName(isActive ? "secondary" : "ghost", "sm")} w-full`}
+              className="block w-full text-center hover:text-teal-300"
             >
               Games
             </NavLink>

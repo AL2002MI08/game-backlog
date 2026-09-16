@@ -2,6 +2,21 @@ import { GameStatus, Platform } from "@/constants/game";
 
 export type FilterStatus = GameStatus | "ALL"
 
+export type ProgressCategory = "ALL" | "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+export interface GameProgress {
+  total: number;
+  completed: number;
+  percent: number;
+  category: ProgressCategory;
+}
+
+export interface filterOptions {
+    search: string;
+    platform: string;
+    status: string;
+    progress: ProgressCategory;
+}
+
 export interface FilterParams {
   search?: string;
   status?: FilterStatus

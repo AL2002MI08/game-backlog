@@ -16,8 +16,6 @@ interface LibraryFiltersProps {
   setStatus: (value: string) => void;
   progress?: ProgressCategory;
   setProgress?: (value: ProgressCategory) => void;
-  resetFilters?: () => void;
-  hasActiveFilters?: boolean;
 }
 
 export default function LibraryFilters({

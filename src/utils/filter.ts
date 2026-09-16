@@ -1,14 +1,6 @@
 import { Platform } from "@/constants/game";
-import { Game } from "@/types/game";
-import { getGameProgress, ProgressCategory } from "@/utils/game";
-
-
-export interface filterOptions {
-    search: string;
-    platform: string;
-    status: string;
-    progress: ProgressCategory;
-}
+import { filterOptions, Game } from "@/types/game";
+import { getGameProgress } from "@/utils/game";
 
 export function filterGames(games: Game[], criteria: filterOptions): Game[] {
     const normalizedSearch = criteria.search.trim().toLowerCase();

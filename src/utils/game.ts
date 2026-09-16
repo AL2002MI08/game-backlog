@@ -1,9 +1,12 @@
 import { GameStatus, Platform } from "@/constants/game";
-import { Game, GameObjective } from "@/types/game";
+import { Game, GameObjective, GameProgress, ProgressCategory } from "@/types/game";
 
-export type ProgressCategory = "ALL" | "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
-
-
+function getProgressCategory(total: number, percent: number): ProgressCategory {
+  if (total === 0) return "NOT_STARTED";
+  if (percent === 100) return "COMPLETED";
+  if (percent > 0) return "IN_PROGRESS";
+  return "NOT_STARTED";
+}
 export function createObjective(title: string): GameObjective {
   return {
     id: `obj-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
@@ -12,23 +15,27 @@ export function createObjective(title: string): GameObjective {
   };
 }
 
-export function getGameProgress(game: Game) {
-  const total = game.objectives?.length || 0;
-  const completed = game.objectives?.filter((objective) => objective.completed).length || 0;
+export function getGameProgress(game: Game): GameProgress {
+  const objectives = game.objectives ?? [];
+  const total = objectives.length;
+  const completed = objectives.reduce(
+    (count, objective) => (objective.completed ? count + 1 : count),
+    0
+  );
 
-  let percent = 0;
-  if (total > 0) {
-    percent = Math.round((completed / total) * 100);
-  }
-
-  let category: ProgressCategory = "NOT_STARTED";
-  if (total > 0 && percent === 100) {
-    category = "COMPLETED";
-  } else if (total > 0 && percent > 0) {
-    category = "IN_PROGRESS";
-  }
+  const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const category = getProgressCategory(total, percent);
 
   return { total, completed, percent, category };
+}
+
+
+export function stripRatingIfUnplayed<T extends Partial<Game>>(gameData: T): T {
+  if (gameData.status === GameStatus.UNPLAYED && gameData.rating !== undefined) {
+    const { rating, ...rest } = gameData;
+    return rest as T;
+  }
+  return gameData;
 }
 
 
