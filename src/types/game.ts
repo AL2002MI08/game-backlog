@@ -33,8 +33,7 @@ export interface GameObjective {
 export interface Game {
   id: string;
   title: string;
-  platform?: Platform;
-  platforms?: Platform[];
+  platforms: Platform[];
   status: GameStatus;
   rating?: number;     
   notes?: string; 

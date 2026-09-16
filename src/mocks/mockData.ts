@@ -25,7 +25,6 @@ export const MOCK_GAMES: Game[] = [
   {
     id: "1",
     title: "FIFA 13",
-    platform: Platform.PLAYSTATION,
     platforms: [Platform.PLAYSTATION, Platform.XBOX, Platform.STEAM],
     status: GameStatus.PLAYING,
     rating: 8,
@@ -44,7 +43,6 @@ export const MOCK_GAMES: Game[] = [
   {
     id: "2",
     title: "Naruto Shippuden - Ultimate Ninja 5",
-    platform: Platform.PLAYSTATION,
     platforms: [Platform.PLAYSTATION],
     status: GameStatus.FINISHED,
     rating: 9,
@@ -64,7 +62,6 @@ export const MOCK_GAMES: Game[] = [
   {
     id: "3",
     title: "Grand Theft Auto: San Andreas",
-    platform: Platform.PLAYSTATION,
     platforms: [Platform.PLAYSTATION, Platform.STEAM, Platform.XBOX],
     status: GameStatus.PLAYING,
     rating: 10,
@@ -83,7 +80,6 @@ export const MOCK_GAMES: Game[] = [
   {
     id: "4",
     title: "Black",
-    platform: Platform.PLAYSTATION,
     platforms: [Platform.PLAYSTATION, Platform.XBOX],
     status: GameStatus.FINISHED,
     rating: 8,
@@ -102,7 +98,6 @@ export const MOCK_GAMES: Game[] = [
   {
     id: "5",
     title: "Elden Ring",
-    platform: Platform.STEAM,
     platforms: [Platform.STEAM, Platform.PLAYSTATION, Platform.XBOX],
     status: GameStatus.PLAYING,
     rating: 10,
@@ -121,7 +116,6 @@ export const MOCK_GAMES: Game[] = [
   {
     id: "6",
     title: "The Witcher 3: Wild Hunt",
-    platform: Platform.GOG,
     platforms: [Platform.GOG, Platform.STEAM, Platform.PLAYSTATION, Platform.XBOX],
     status: GameStatus.FINISHED,
     rating: 10,
@@ -141,7 +135,6 @@ export const MOCK_GAMES: Game[] = [
   {
     id: "7",
     title: "Cyberpunk 2077",
-    platform: Platform.EPIC,
     platforms: [Platform.EPIC, Platform.STEAM, Platform.PLAYSTATION, Platform.XBOX],
     status: GameStatus.ABANDONED,
     rating: 6,
@@ -159,7 +152,6 @@ export const MOCK_GAMES: Game[] = [
   {
     id: "8",
     title: "Hollow Knight",
-    platform: Platform.STEAM,
     platforms: [Platform.STEAM, Platform.PLAYSTATION, Platform.XBOX, Platform.OTHER],
     status: GameStatus.UNPLAYED,
     notes: "Waiting in backlog for the next vacation period.",

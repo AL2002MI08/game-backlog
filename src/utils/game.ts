@@ -40,7 +40,7 @@ export function stripRatingIfUnplayed<T extends Partial<Game>>(gameData: T): T {
 
 
 export function getActivePlatform(game: Game): Platform {
-  return game.platform || (game.platforms && game.platforms[0]) || Platform.OTHER;
+  return game.platforms[0] ?? Platform.OTHER;
 }
 
 export function getStatusBadgeStyle(status: GameStatus): string {

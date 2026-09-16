@@ -1,8 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { filterGames } from "@/utils/filter";
-import { Game } from "@/types/game";
-import { ProgressCategory } from "@/utils/game";
+import { Game, ProgressCategory } from "@/types/game";
 
 export function useGameFilters(games: Game[] = []) {
   const [searchParams, setSearchParams] = useSearchParams();

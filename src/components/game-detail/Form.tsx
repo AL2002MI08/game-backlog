@@ -3,10 +3,11 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertTriangle, Trash2, Plus } from 'lucide-react';
 import { useCreateGameMutation, useUpdateGameMutation } from '@/hooks/useGames';
-import { STATUS_FORM_OPTIONS, PLATFORM_FORM_OPTIONS, Platform, GameStatus } from '@/constants/game';
+import { STATUS_FORM_OPTIONS, PLATFORM_FORM_OPTIONS, GameStatus } from '@/constants/game';
 import { createObjective } from '@/utils/game';
 import { gameSchema, GameFormValues } from '@/schemas/game';
 import Select from '@/components/ui/Select';
+import MultiSelect from '@/components/ui/MultiSelect';
 import Button from '@/components/ui/Button';
 import { Game, GameObjective } from '@/types/game';
 
@@ -34,7 +35,7 @@ export default function Form({ mode, initialData, onSuccess, onError, loading = 
     resolver: zodResolver(gameSchema),
     defaultValues: {
       title: initialData?.title ?? '',
-      platform: initialData?.platform ?? Platform.OTHER,
+      platforms: initialData?.platforms ?? [],
       status: initialData?.status ?? GameStatus.UNPLAYED,
       rating: initialData?.rating,
       coverImage: initialData?.coverImage ?? '',
@@ -94,14 +95,14 @@ export default function Form({ mode, initialData, onSuccess, onError, loading = 
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Platform</label>
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Platforms</label>
         <Controller
-          name="platform"
+          name="platforms"
           control={control}
           render={({ field }) => (
-            <Select
+            <MultiSelect
               data={PLATFORM_FORM_OPTIONS}
-              placeholder="Select platform"
+              placeholder="Select platforms"
               value={field.value}
               onChange={field.onChange}
               onBlur={field.onBlur}
@@ -109,7 +110,7 @@ export default function Form({ mode, initialData, onSuccess, onError, loading = 
             />
           )}
         />
-        {errors.platform && <span className="text-xs text-rose-600">{errors.platform.message}</span>}
+        {errors.platforms && <span className="text-xs text-rose-600">{errors.platforms.message}</span>}
       </div>
 
       <div>

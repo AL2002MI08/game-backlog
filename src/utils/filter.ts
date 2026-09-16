@@ -12,12 +12,8 @@ export function filterGames(games: Game[], criteria: filterOptions): Game[] {
             if (!titleMatches && !notesMatches) return false;
         }
 
-        if (criteria.platform !== "ALL") {
-            const activePlatform = game.platform || (game.platforms && game.platforms[0]);
-            const hasPlatform =
-                activePlatform === criteria.platform ||
-                game.platforms?.includes(criteria.platform as Platform);
-            if (!hasPlatform) return false;
+        if (criteria.platform !== "ALL" && !game.platforms.includes(criteria.platform as Platform)) {
+            return false;
         }
 
         if (criteria.status !== "ALL" && game.status !== criteria.status) {

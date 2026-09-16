@@ -5,7 +5,7 @@ import {
   PLATFORM_FILTER_OPTIONS,
   PROGRESS_FILTER_OPTIONS,
 } from "@/constants/game";
-import { ProgressCategory } from "@/utils/game";
+import { ProgressCategory } from "@/types/game";
 
 interface LibraryFiltersProps {
   search: string;
