@@ -53,6 +53,7 @@ export const PLATFORM_FILTER_OPTIONS = [
 
 export const PROGRESS_FILTER_OPTIONS = [
   { value: "ALL", label: "All Progress" },
+  { value: "NO_OBJECTIVES", label: "No Objectives" },
   { value: "NOT_STARTED", label: "Not Started" },
   { value: "IN_PROGRESS", label: "In Progress" },
   { value: "COMPLETED", label: "Completed" },

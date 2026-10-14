@@ -2,11 +2,11 @@ import { GameStatus, Platform } from "@/constants/game";
 
 export type FilterStatus = GameStatus | "ALL"
 
-export type ProgressCategory = "ALL" | "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+export type ProgressCategory = "ALL" | "NO_OBJECTIVES" | "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
 export interface GameProgress {
   total: number;
   completed: number;
-  percent: number;
+  percent: number | null;
   category: ProgressCategory;
 }
 
@@ -37,6 +37,12 @@ export interface GameObjective {
 
 export type Objective = GameObjective;
 
+export interface GameProgressSummary {
+  total: number;
+  completed: number;
+  percentage: number | null;
+}
+
 export interface Game {
   id: string;
   title: string;
@@ -46,6 +52,7 @@ export interface Game {
   notes?: string; 
   coverImage?: string;
   objectives?: GameObjective[];
+  progress?: GameProgressSummary;
   startedAt?: string;
   finishedAt?: string;
   createdAt?: string;         

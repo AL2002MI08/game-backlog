@@ -14,12 +14,12 @@ interface PagedResponse<T> {
 }
 
 export async function getGames(params?: FilterParams): Promise<Game[]> {
-  const queryParams = new URLSearchParams();
+  // The backend defaults to 10 per page; 100 is its maximum. Filtering happens client-side.
+  const queryParams = new URLSearchParams({ pageSize: "100" });
   if (params?.search) queryParams.set("search", params.search.trim());
   if (params?.status && params.status !== "ALL") queryParams.set("status", params.status);
 
-  const url = queryParams.toString() ? `/games?${queryParams.toString()}` : "/games";
-  const response = await apiClient.get<PagedResponse<Game>>(url);
+  const response = await apiClient.get<PagedResponse<Game>>(`/games?${queryParams.toString()}`);
   return response.data.items;
 }
 

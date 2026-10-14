@@ -19,7 +19,8 @@ export default function GameDetailObjectives({
   onAdd,
   onReorder,
 }: GameDetailObjectivesProps) {
-  const { total, completed, percent } = getGameProgress(game);
+  const { total, completed, percent: progressPercent } = getGameProgress(game);
+  const percent = progressPercent ?? 0;
   const [newTitle, setNewTitle] = useState("");
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -74,7 +75,7 @@ export default function GameDetailObjectives({
           <span>Checklist</span>
         </h2>
         <span className="text-xs font-bold text-teal-600 dark:text-teal-400">
-          {completed} of {total} completed ({percent}%)
+          {progressPercent === null ? "No objectives yet" : `${completed} of ${total} completed (${progressPercent}%)`}
         </span>
       </div>
 

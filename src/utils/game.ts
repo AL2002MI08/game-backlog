@@ -1,10 +1,10 @@
 import { GameStatus, Platform } from "@/constants/game";
 import { Game, GameObjective, GameProgress, ProgressCategory } from "@/types/game";
 
-function getProgressCategory(total: number, percent: number): ProgressCategory {
-  if (total === 0) return "NOT_STARTED";
-  if (percent === 100) return "COMPLETED";
-  if (percent > 0) return "IN_PROGRESS";
+function getProgressCategory(total: number, completed: number): ProgressCategory {
+  if (total === 0) return "NO_OBJECTIVES";
+  if (completed === total) return "COMPLETED";
+  if (completed > 0) return "IN_PROGRESS";
   return "NOT_STARTED";
 }
 export function createObjective(label: string): GameObjective {
@@ -16,6 +16,11 @@ export function createObjective(label: string): GameObjective {
 }
 
 export function getGameProgress(game: Game): GameProgress {
+  if (!game.objectives && game.progress) {
+    const { total, completed, percentage } = game.progress;
+    return { total, completed, percent: percentage, category: getProgressCategory(total, completed) };
+  }
+
   const objectives = game.objectives ?? [];
   const total = objectives.length;
   const completed = objectives.reduce(
@@ -23,8 +28,8 @@ export function getGameProgress(game: Game): GameProgress {
     0
   );
 
-  const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-  const category = getProgressCategory(total, percent);
+  const percent = total > 0 ? Math.round((completed / total) * 100) : null;
+  const category = getProgressCategory(total, completed);
 
   return { total, completed, percent, category };
 }

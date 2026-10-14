@@ -83,7 +83,7 @@ function CardInfo({ game }: CardInfoProps) {
         <StatusBadge status={game.status} />
       </div>
 
-      {total > 0 && (
+      {percent !== null && (
         <div className="pt-2 mt-auto grid grid-rows-2 gap-1">
           <div className="grid grid-cols-[1fr_auto] text-xs">
             <span className="text-slate-500 dark:text-slate-400 text-[11px]">
