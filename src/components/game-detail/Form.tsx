@@ -350,15 +350,16 @@ export default function Form({ mode, initialData, onSuccess, onError, loading = 
 
       {watchedStatus !== GameStatus.UNPLAYED && (
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Rating (0‑10)</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Rating (1‑10)</label>
           <input
             type="number"
-            min={0}
+            min={1}
             max={10}
-            step={0.1}
-            {...register('rating', { valueAsNumber: true })}
+            step={1}
+            {...register('rating', { setValueAs: (v) => (v === '' || v == null ? null : Number(v)) })}
             className="w-full rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-2"
           />
+          {errors.rating && <span className="text-xs text-rose-600">{errors.rating.message}</span>}
         </div>
       )}
 

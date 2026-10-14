@@ -7,9 +7,9 @@ export function validateGamePayload(game: Partial<Game>): void {
     if (
         game.rating !== undefined &&
         game.rating !== null &&
-        (game.rating < 0 || game.rating > 10)
+        (!Number.isInteger(game.rating) || game.rating < 1 || game.rating > 10)
     ) {
-        throw new Error("Game rating must be between 0 and 10");
+        throw new Error("Game rating must be a whole number between 1 and 10");
     }
 }
 

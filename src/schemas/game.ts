@@ -6,7 +6,12 @@ export const gameSchema = z.object({
   coverImage: z.string().optional(),
   platform: z.enum(Platform, { message: 'Platform is required' }),
   status: z.enum(GameStatus, { message: 'Status is required' }),
-  rating: z.number().min(0).max(10).nullable().optional(),
+  rating: z
+    .number().int({ message: 'Rating must be a number' })
+    .min(1, 'Rating must be between 1 and 10')
+    .max(10, 'Rating must be between 1 and 10')
+    .nullable()
+    .optional(),
   notes: z.string().optional(),
 });
 
