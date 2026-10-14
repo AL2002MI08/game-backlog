@@ -44,7 +44,7 @@ export default function Login() {
       navigate(RouteLinks.GameOverview);
     } catch (e) {
       setError('root', {
-        message: e instanceof Error ? e.message : 'Invalid credentials. Please try again.',
+        message: e instanceof Error ? e.message : String(e),
       });
     }
   };

@@ -54,10 +54,10 @@ export async function restoreSession(): Promise<AuthResponse | null> {
     store.removeItem("auth_user");
   }
 
-  const raw = await tokenStore.get();
-  if (!raw) return null;
-
   try {
+    const raw = await tokenStore.get();
+    if (!raw) return null;
+
     const { token, expiresAt } = JSON.parse(raw) as { token: string; expiresAt: string };
 
     if (new Date(expiresAt).getTime() <= Date.now()) {
