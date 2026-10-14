@@ -32,5 +32,12 @@ export default defineConfig(() => ({
     watch: {
       ignored: ["**/src-tauri/**"],
     },
+    proxy: {
+      '/api-steam': {
+        target: 'https://store.steampowered.com',
+        changeOrigin: true,
+        rewrite: (p) => p.replace(/^\/api-steam/, ''),
+      },
+    },
   },
 }));

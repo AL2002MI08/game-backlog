@@ -1,4 +1,3 @@
-import { Platform } from "@/constants/game";
 import { filterOptions, Game } from "@/types/game";
 import { getGameProgress } from "@/utils/game";
 
@@ -12,7 +11,7 @@ export function filterGames(games: Game[], criteria: filterOptions): Game[] {
             if (!titleMatches && !notesMatches) return false;
         }
 
-        if (criteria.platform !== "ALL" && !game.platforms.includes(criteria.platform as Platform)) {
+        if (criteria.platform !== "ALL" && game.platform !== criteria.platform) {
             return false;
         }
 

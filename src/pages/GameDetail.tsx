@@ -2,8 +2,13 @@ import { useState } from "react";
 import { useParams, useNavigate, useOutletContext, Link } from "react-router-dom";
 import { AlertTriangle } from "lucide-react";
 import { useGameDetailQuery, useUpdateGameMutation, useDeleteGameMutation } from "@/hooks/useGames";
-import { GameStatus } from "@/constants/game";
-import { createObjective } from "@/utils/game";
+import {
+  useObjectivesQuery,
+  useAddObjectiveMutation,
+  useToggleObjectiveMutation,
+  useDeleteObjectiveMutation,
+  useReorderObjectivesMutation,
+} from "@/hooks/useObjectives";
 import GameDetailBanner from "@/components/game-detail/GameDetailBanner";
 import GameDetailObjectives from "@/components/game-detail/GameDetailObjectives";
 import FormModal from "@/components/FormModal";
@@ -26,8 +31,13 @@ export default function GameDetail() {
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const { data: game, isLoading, isError, error, refetch } = useGameDetailQuery(gameId);
+  const { data: objectivesFromApi } = useObjectivesQuery(gameId);
   const updateMutation = useUpdateGameMutation();
   const deleteMutation = useDeleteGameMutation();
+  const addObjMutation = useAddObjectiveMutation(gameId || "");
+  const toggleObjMutation = useToggleObjectiveMutation(gameId || "");
+  const deleteObjMutation = useDeleteObjectiveMutation(gameId || "");
+  const reorderObjMutation = useReorderObjectivesMutation(gameId || "");
 
   if (isLoading) {
     return <Spinner />;
@@ -47,32 +57,30 @@ export default function GameDetail() {
     );
   }
 
+  const objectives = objectivesFromApi ?? game.objectives ?? [];
+  const fullGame = { ...game, objectives };
+
   const handleToggle = async (objId: string) => {
-    if (!game.objectives) return;
-    const updated = game.objectives.map((objective) => (objective.id === objId ? { ...objective, completed: !objective.completed } : objective));
-    const allDone = updated.every((objective) => objective.completed);
-    const status = allDone && game.status === GameStatus.PLAYING ? GameStatus.FINISHED : game.status;
+    const obj = objectives.find((objective) => objective.id === objId);
+    if (!obj) return;
     try {
-      await updateMutation.mutateAsync({ id: game.id, data: { objectives: updated, status } });
+      await toggleObjMutation.mutateAsync({ objectiveId: objId, completed: obj.completed });
     } catch (e) {
       showToast(getErrorMessage(e), "error");
     }
   };
 
   const handleRemoveObjective = async (objId: string) => {
-    if (!game.objectives) return;
-    const updated = game.objectives.filter((objective) => objective.id !== objId);
     try {
-      await updateMutation.mutateAsync({ id: game.id, data: { objectives: updated } });
+      await deleteObjMutation.mutateAsync(objId);
     } catch (e) {
       showToast(getErrorMessage(e), "error");
     }
   };
 
-  const handleAddObjective = async (title: string) => {
-    const updated = [...(game.objectives ?? []), createObjective(title)];
+  const handleAddObjective = async (label: string) => {
     try {
-      await updateMutation.mutateAsync({ id: game.id, data: { objectives: updated } });
+      await addObjMutation.mutateAsync(label);
     } catch (e) {
       showToast(getErrorMessage(e), "error");
     }
@@ -93,7 +101,7 @@ export default function GameDetail() {
       <FormModal opened={showEdit} onClose={() => setShowEdit(false)} title="Edit Game">
         <Form
           mode="edit"
-          initialData={game}
+          initialData={fullGame}
           onSuccess={() => { setShowEdit(false); refetch(); }}
           onError={(message) => showToast(message, "error")}
           loading={updateMutation.isPending}
@@ -110,16 +118,17 @@ export default function GameDetail() {
         </div>
       </ConfirmModal>
       <GameDetailBanner
-        game={game}
+        game={fullGame}
         onOpenDelete={() => setShowDelete(true)}
         onOpenEdit={() => setShowEdit(true)}
 
       />
       <GameDetailObjectives
-        game={game}
+        game={fullGame}
         onToggle={handleToggle}
         onRemove={handleRemoveObjective}
         onAdd={handleAddObjective}
+        onReorder={(ids) => reorderObjMutation.mutate(ids)}
       />
     </div>
   );

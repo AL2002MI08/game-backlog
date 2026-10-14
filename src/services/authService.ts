@@ -1,10 +1,11 @@
 import { LoginFormValues } from "@/schemas/auth";
 import { apiClient } from "@/services/apiClient";
+import { tokenStore } from "./tokenService";
+
 
 export interface UserProfile {
   id: string;
   email: string;
-  name: string;
 }
 
 export interface AuthResponse {
@@ -12,35 +13,78 @@ export interface AuthResponse {
   user: UserProfile;
 }
 
-const AUTH_TOKEN_KEY = "auth_token";
-const USER_KEY = "auth_user";
+interface LoginResponse {
+  token: string;
+  expiresAt: string;
+}
+
+let session: { token: string; expiresAt: string; user: UserProfile | null } | null = null;
+
+async function fetchProfile(token: string): Promise<UserProfile> {
+  const res = await apiClient.get<UserProfile>("/auth/me", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+}
 
 export async function login(userData: LoginFormValues): Promise<AuthResponse> {
-  const response = await apiClient.post<AuthResponse>("/auth/login", userData);
-  const data = response.data;
-  const storage = userData.rememberMe ? localStorage : sessionStorage;
-  storage.setItem(AUTH_TOKEN_KEY, data.token);
-  storage.setItem(USER_KEY, JSON.stringify(data.user));
-  return data;
+  const { data } = await apiClient.post<LoginResponse>("/auth/login", {
+    email: userData.email,
+    password: userData.password,
+  });
+
+  session = { token: data.token, expiresAt: data.expiresAt, user: null };
+
+  if (userData.rememberMe) {
+    await tokenStore.save(JSON.stringify({ token: data.token, expiresAt: data.expiresAt }));
+  } else {
+    await tokenStore.clear();
+  }
+
+  const user = await fetchProfile(data.token);
+  session.user = user;
+
+  return { token: data.token, user };
 }
 
-export function logout(): void {
-  localStorage.removeItem(AUTH_TOKEN_KEY);
-  localStorage.removeItem(USER_KEY);
-  sessionStorage.removeItem(AUTH_TOKEN_KEY);
-  sessionStorage.removeItem(USER_KEY);
-}
+export async function restoreSession(): Promise<AuthResponse | null> {
 
-export function getStoredUser(): UserProfile | null {
-  const rawUser = localStorage.getItem(USER_KEY) || sessionStorage.getItem(USER_KEY);
-  if (!rawUser) return null;
+  for (const store of [localStorage, sessionStorage]) {
+    store.removeItem("auth_token");
+    store.removeItem("auth_user");
+  }
+
+  const raw = await tokenStore.get();
+  if (!raw) return null;
+
   try {
-    return JSON.parse(rawUser);
+    const { token, expiresAt } = JSON.parse(raw) as { token: string; expiresAt: string };
+
+    if (new Date(expiresAt).getTime() <= Date.now()) {
+      await tokenStore.clear();
+      return null;
+    }
+
+    session = { token, expiresAt, user: null };
+    const user = await fetchProfile(token); 
+    session.user = user;
+    return { token, user };
   } catch {
+    session = null;
+    await tokenStore.clear();
     return null;
   }
 }
 
+export async function logout(): Promise<void> {
+  session = null;
+  await tokenStore.clear();
+}
+
+export function getStoredUser(): UserProfile | null {
+  return session?.user ?? null;
+}
+
 export function getStoredToken(): string | null {
-  return localStorage.getItem(AUTH_TOKEN_KEY) || sessionStorage.getItem(AUTH_TOKEN_KEY);
+  return session?.token ?? null;
 }

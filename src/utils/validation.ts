@@ -6,6 +6,7 @@ export function validateGamePayload(game: Partial<Game>): void {
     }
     if (
         game.rating !== undefined &&
+        game.rating !== null &&
         (game.rating < 0 || game.rating > 10)
     ) {
         throw new Error("Game rating must be between 0 and 10");

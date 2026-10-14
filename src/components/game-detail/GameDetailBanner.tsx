@@ -1,12 +1,13 @@
 import { Game } from "@/types/game";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Gamepad2, Star, Pencil, Trash2, ArrowLeft } from "lucide-react";
-import { getActivePlatform } from "@/utils/game";
 import { GameStatus } from "@/constants/game";
 import { PlatformBadge, StatusBadge } from "@/components/game/StatusBadge";
 import Button from "@/components/ui/Button";
 import { RouteLinks } from "@/constants/routes";
+import { formatDate } from "@/utils/game";
+import { searchGameCover } from "@/services/coverService";
 
 interface GameDetailBannerProps {
   game: Game;
@@ -16,8 +17,19 @@ interface GameDetailBannerProps {
 
 export default function GameDetailBanner({ game, onOpenDelete, onOpenEdit }: GameDetailBannerProps) {
   const [imageError, setImageError] = useState(false);
-  const activePlatform = getActivePlatform(game);
-  const showFallback = !game.coverImage || imageError;
+  const [fallbackCover, setFallbackCover] = useState<string | null>(null);
+
+  useEffect(() => {
+    setImageError(false);
+    if (!game.coverImage && game.title) {
+      searchGameCover(game.title).then((url) => {
+        if (url) setFallbackCover(url);
+      });
+    }
+  }, [game.coverImage, game.title]);
+
+  const activeCover = game.coverImage || fallbackCover;
+  const showFallback = !activeCover || imageError;
 
   return (
     <div className="space-y-4">
@@ -43,7 +55,13 @@ export default function GameDetailBanner({ game, onOpenDelete, onOpenEdit }: Gam
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 sm:p-8">
           <div className="w-full h-72 rounded-2xl bg-slate-100 dark:bg-[#050811] overflow-hidden border border-slate-200 dark:border-[#18233c] flex items-center justify-center relative shadow-xs">
             {!showFallback ? (
-              <img src={game.coverImage} alt={game.title} onError={() => setImageError(true)} className="w-full h-full object-cover" />
+              <img
+                src={activeCover}
+                alt={game.title}
+                referrerPolicy="no-referrer"
+                onError={() => setImageError(true)}
+                className="w-full h-full object-cover"
+              />
             ) : (
               <div className="text-center p-6 space-y-3">
                 <span className="text-[10px] font-black tracking-widest text-slate-400 dark:text-slate-500 uppercase">COVER UNAVAILABLE</span>
@@ -63,7 +81,7 @@ export default function GameDetailBanner({ game, onOpenDelete, onOpenEdit }: Gam
           <div className="md:col-span-2 flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-2">
-                <PlatformBadge platform={activePlatform} size="md" />
+                <PlatformBadge platform={game.platform} size="md" />
                 <StatusBadge status={game.status} size="md" />
               </div>
               <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">{game.title}</h1>
@@ -76,9 +94,9 @@ export default function GameDetailBanner({ game, onOpenDelete, onOpenEdit }: Gam
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-3 border-t border-slate-200 dark:border-[#18233c] text-xs text-slate-500">
-              {game.startedAt && <div><span className="block text-slate-400">Started</span><span className="text-slate-800 dark:text-slate-200 font-semibold">{game.startedAt}</span></div>}
-              {game.finishedAt && <div><span className="block text-slate-400">Finished</span><span className="text-slate-800 dark:text-slate-200 font-semibold">{game.finishedAt}</span></div>}
-              {game.createdAt && <div><span className="block text-slate-400">Added</span><span className="text-slate-800 dark:text-slate-200 font-semibold">{game.createdAt.split("T")[0]}</span></div>}
+              {game.startedAt && <div><span className="block text-slate-400">Started</span><span className="text-slate-800 dark:text-slate-200 font-semibold">{formatDate(game.startedAt)}</span></div>}
+              {game.finishedAt && <div><span className="block text-slate-400">Finished</span><span className="text-slate-800 dark:text-slate-200 font-semibold">{formatDate(game.finishedAt)}</span></div>}
+              {game.createdAt && <div><span className="block text-slate-400">Added</span><span className="text-slate-800 dark:text-slate-200 font-semibold">{formatDate(game.createdAt)}</span></div>}
             </div>
           </div>
         </div>

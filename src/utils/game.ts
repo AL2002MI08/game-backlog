@@ -7,10 +7,10 @@ function getProgressCategory(total: number, percent: number): ProgressCategory {
   if (percent > 0) return "IN_PROGRESS";
   return "NOT_STARTED";
 }
-export function createObjective(title: string): GameObjective {
+export function createObjective(label: string): GameObjective {
   return {
     id: `obj-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-    title: title.trim(),
+    label: label.trim(),
     completed: false,
   };
 }
@@ -40,7 +40,18 @@ export function stripRatingIfUnplayed<T extends Partial<Game>>(gameData: T): T {
 
 
 export function getActivePlatform(game: Game): Platform {
-  return game.platforms[0] ?? Platform.OTHER;
+  return game.platform ?? Platform.OTHER;
+}
+
+export function formatDate(dateStr?: string | null): string {
+  if (!dateStr) return "";
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr;
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
 }
 
 export function getStatusBadgeStyle(status: GameStatus): string {

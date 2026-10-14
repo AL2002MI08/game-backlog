@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Gamepad2, Star } from "lucide-react";
-import { getActivePlatform, getGameProgress } from "@/utils/game";
+import { getGameProgress } from "@/utils/game";
 import { Game } from "@/types/game";
 import { GameStatus } from "@/constants/game";
 import { PlatformBadge, StatusBadge } from "@/components/game/StatusBadge";
+import { searchGameCover } from "@/services/coverService";
 
 interface CardCoverProps {
   coverImage?: string;
   title: string;
-  rating?: number;
+  rating?: number | null;
 }
 
 interface CardProps {
@@ -22,14 +23,27 @@ interface CardInfoProps {
 
 function CardCover({ coverImage, title, rating }: CardCoverProps) {
   const [imageError, setImageError] = useState(false);
-  const showFallback = !coverImage || imageError;
+  const [fallbackCover, setFallbackCover] = useState<string | null>(null);
+
+  useEffect(() => {
+    setImageError(false);
+    if (!coverImage && title) {
+      searchGameCover(title).then((url) => {
+        if (url) setFallbackCover(url);
+      });
+    }
+  }, [coverImage, title]);
+
+  const activeCover = coverImage || fallbackCover;
+  const showFallback = !activeCover || imageError;
 
   return (
     <div className="relative w-full h-full bg-slate-100 dark:bg-[#050811] overflow-hidden grid place-items-center">
       {!showFallback ? (
         <img
-          src={coverImage}
+          src={activeCover}
           alt={title}
+          referrerPolicy="no-referrer"
           onError={() => setImageError(true)}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
@@ -56,7 +70,6 @@ function CardCover({ coverImage, title, rating }: CardCoverProps) {
 }
 
 function CardInfo({ game }: CardInfoProps) {
-  const activePlatform = getActivePlatform(game);
   const { total, completed, percent } = getGameProgress(game);
 
   return (
@@ -66,7 +79,7 @@ function CardInfo({ game }: CardInfoProps) {
       </h3>
 
       <div className="grid grid-cols-2 gap-2">
-        <PlatformBadge platform={activePlatform} />
+        <PlatformBadge platform={game.platform} />
         <StatusBadge status={game.status} />
       </div>
 

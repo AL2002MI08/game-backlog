@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getGames, getGameById, createGame, updateGame, deleteGame } from "@/services/gameService";
+import { getGames, getGameById, createGame, updateGame, updateGameStatus, deleteGame } from "@/services/gameService";
 import { Game, GameFilterParams } from "@/types/game";
 
 export const GAME_QUERY_KEYS = {
@@ -40,9 +40,21 @@ export function useUpdateGameMutation() {
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Game> }) => updateGame(id, data),
-    onSuccess: (updatedGame) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: GAME_QUERY_KEYS.all });
-      queryClient.invalidateQueries({ queryKey: GAME_QUERY_KEYS.detail(updatedGame.id) });
+      queryClient.invalidateQueries({ queryKey: GAME_QUERY_KEYS.detail(variables.id) });
+    },
+  });
+}
+
+export function useUpdateGameStatusMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) => updateGameStatus(id, status),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: GAME_QUERY_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: GAME_QUERY_KEYS.detail(variables.id) });
     },
   });
 }

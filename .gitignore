@@ -36,3 +36,8 @@ src-tauri/target/
 
 # OS files
 Thumbs.db
+ 
+src-tauri/icons/32x32.png
+src-tauri/icons/64x64.png
+src-tauri/icons/android/
+src-tauri/icons/ios/

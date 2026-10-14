@@ -26,16 +26,23 @@ export type GameFilterParams = FilterParams;
 
 export interface GameObjective {
   id: string;
-  title: string;
+  label: string;
   completed: boolean;
+  gameId?: string;
+  position?: number;
+  completedAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
+
+export type Objective = GameObjective;
 
 export interface Game {
   id: string;
   title: string;
-  platforms: Platform[];
+  platform: Platform;
   status: GameStatus;
-  rating?: number;     
+  rating?: number | null;     
   notes?: string; 
   coverImage?: string;
   objectives?: GameObjective[];
@@ -44,4 +51,3 @@ export interface Game {
   createdAt?: string;         
   updatedAt?: string;         
 }
-

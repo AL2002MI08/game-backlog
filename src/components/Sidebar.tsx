@@ -21,7 +21,7 @@ export default function Sidebar() {
         >
           <User className="w-5 h-5" />
           <div className="absolute left-full top-0 ml-3 px-3 py-2 rounded-xl bg-slate-900 dark:bg-slate-800 text-white text-xs font-medium whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity shadow-xl border border-slate-700/60 dark:border-slate-700 z-[70]">
-            <div className="font-semibold text-slate-100">{user?.name || "Gamer"}</div>
+            <div className="font-semibold text-slate-100">{user?.email || "Gamer"}</div>
             <div className="text-[10px] text-teal-400 font-medium">Gamer</div>
           </div>
         </div>
